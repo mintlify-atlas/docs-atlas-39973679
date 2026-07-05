@@ -1,6 +1,6 @@
 ---
 title: "Deploy Giovanny Burger: Vercel, Netlify, and Static Hosting"
-sidebarTitle: "Producción"
+sidebarTitle: "Production"
 description: "Build the Vite app into a static dist/ bundle and deploy Giovanny Burger to Vercel, Netlify, or any static hosting platform with zero server configuration."
 ---
 
@@ -140,11 +140,11 @@ En todos los casos, el proceso es el mismo: generar `dist/` con `npm run build` 
 
 Giovanny Burger **no requiere variables de entorno** para funcionar. No hay claves de API externas ni secrets de servidor involucrados.
 
-El único valor que necesitas configurar antes de desplegar es el **número de teléfono de WhatsApp** al que se envían los pedidos. Este número está definido directamente en el código fuente:
+El único valor que necesitas configurar antes de desplegar es el **número de teléfono de WhatsApp** al que se envían los pedidos. Este número está definido directamente en el código fuente dentro de la función `sendWhatsAppOrder`:
 
 ```jsx
 // src/App.jsx
-const WHATSAPP_NUMBER = "569XXXXXXXX"; // Reemplaza con el número real
+const phoneNumber = "573000000000"; // Reemplaza con el número real del restaurante
 ```
 
 Para más detalles sobre cómo cambiar este valor, consulta la guía [Configurar el número de WhatsApp](/configuration/whatsapp-number).

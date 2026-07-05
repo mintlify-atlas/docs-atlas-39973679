@@ -1,6 +1,6 @@
 ---
-title: "Run Giovanny Burger Locally for Development"
-sidebarTitle: "Local"
+title: "Run the Giovanny Burger App Locally for Development"
+sidebarTitle: "Local Dev"
 description: "Clone the pedidoHAM repo, install dependencies, start the Vite dev server, and verify the digital menu and WhatsApp ordering app runs at localhost:5173."
 ---
 
@@ -91,12 +91,12 @@ git --version
 
 El `package.json` expone cuatro scripts que cubren el ciclo de vida completo del proyecto:
 
-| Script | Comando | Descripción |
-|---|---|---|
-| Desarrollo | `npm run dev` | Inicia el servidor Vite con HMR en `localhost:5173` |
-| Producción | `npm run build` | Genera el bundle optimizado en `dist/` |
-| Vista previa | `npm run preview` | Sirve el build de producción localmente |
-| Linting | `npm run lint` | Ejecuta ESLint sobre el proyecto |
+| Script | Comando npm | Comando subyacente | Descripción |
+|---|---|---|---|
+| Desarrollo | `npm run dev` | `vite` | Inicia el servidor Vite con HMR en `localhost:5173` |
+| Producción | `npm run build` | `vite build` | Genera el bundle optimizado en `dist/` |
+| Vista previa | `npm run preview` | `vite preview` | Sirve el build de producción localmente |
+| Linting | `npm run lint` | `eslint .` | Ejecuta ESLint sobre el proyecto |
 
 ## Hot Module Replacement
 
@@ -105,5 +105,5 @@ Vite incluye **HMR** (Hot Module Replacement) activo de manera predeterminada en
 El estado del componente se preserva entre actualizaciones en la mayoría de los casos, lo que hace que el ciclo de editar → ver sea especialmente ágil cuando, por ejemplo, estás ajustando estilos de las tarjetas de producto o modificando la lógica del carrito.
 
 <Note>
-  El carrito de compras persiste su estado en **localStorage** del navegador. Si necesitas resetear el carrito durante el desarrollo (por ejemplo, para probar el flujo desde cero), abre las **DevTools** del navegador → pestaña *Application* → *Storage* → *Local Storage* → `http://localhost:5173` y elimina la clave correspondiente al carrito. Al recargar la página, el estado quedará limpio.
+  El carrito de compras persiste su estado en **localStorage** del navegador bajo la clave `chamosCart`. Si necesitas resetear el carrito durante el desarrollo (por ejemplo, para probar el flujo desde cero), abre las **DevTools** del navegador → pestaña *Application* → *Storage* → *Local Storage* → `http://localhost:5173` y elimina la clave `chamosCart`. Al recargar la página, el estado quedará limpio.
 </Note>
