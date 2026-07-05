@@ -1,0 +1,58 @@
+---
+title: "Set the Restaurant WhatsApp Number for Orders"
+sidebarTitle: "Número WhatsApp"
+description: "Update the wa.me phone number inside sendWhatsAppOrder in App.jsx so that every customer order is delivered to the correct restaurant WhatsApp account."
+---
+
+When a customer taps **Pedir por WhatsApp**, the app builds an order summary message and opens a `wa.me` link pointing to the restaurant's phone number. You must set this number to your own WhatsApp line before going live — otherwise orders will be sent to the placeholder number and never reach you.
+
+## Dónde está el número
+
+The phone number is defined inside the `sendWhatsAppOrder` function in `src/App.jsx`. Search for the constant `phoneNumber`:
+
+```jsx
+const sendWhatsAppOrder = () => {
+  // ... message is built above ...
+
+  // Cambia este número por el WhatsApp real del restaurante
+  const phoneNumber = "573000000000";
+  const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+};
+```
+
+The only value you need to change is the string assigned to `phoneNumber`.
+
+## Formato del número
+
+The number must follow the **international format** required by the WhatsApp `wa.me` API:
+
+- Include the full country code (no leading `+`)
+- No spaces, dashes, dots, or parentheses
+- Include the full local number after the country code
+
+| País | Código | Ejemplo completo |
+|---|---|---|
+| Colombia | 57 | `573001234567` |
+| México | 52 | `5215512345678` |
+| España | 34 | `34612345678` |
+| USA / Canadá | 1 | `12125551234` |
+
+## Cómo actualizar el número
+
+Open `src/App.jsx`, find the `sendWhatsAppOrder` function, and replace the placeholder with your real number:
+
+```jsx
+const phoneNumber = "573000000000"; // [!code --]
+const phoneNumber = "573101234567"; // [!code ++]
+```
+
+Save the file. Vite will hot-reload the app and all subsequent orders will be directed to the new number.
+
+<Warning>
+  If the phone number is incorrect, WhatsApp will silently open a chat with the wrong contact — or show a "number not found" error on the customer's device. There is no order notification on the restaurant side, so orders will be permanently lost. Always verify the number with a test order before publishing the menu.
+</Warning>
+
+<Note>
+  The WhatsApp account associated with the number must be active and capable of receiving messages. Business accounts (WhatsApp Business) and personal accounts both work with `wa.me` links. Make sure the number is registered on WhatsApp and that the app is open or notifications are enabled on the restaurant device.
+</Note>

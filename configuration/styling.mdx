@@ -1,0 +1,147 @@
+---
+title: "Customize Colors, Fonts, and Layout Styles"
+sidebarTitle: "Estilos"
+description: "Change brand colors, card styles, and responsive breakpoints for Giovanny Burger by editing the plain CSS3 rules in src/App.css and src/index.css."
+---
+
+Giovanny Burger uses **plain CSS3** — no Tailwind, no CSS-in-JS, no external UI framework. All visual styles live in two files:
+
+- **`src/index.css`** — global resets, `Inter` font import from Google Fonts, and base `body` styles.
+- **`src/App.css`** — all component-level styles: the hero header, burger card grid, cart sidebar, buttons, badges, and responsive breakpoints.
+
+This keeps the setup simple: open the relevant `.css` file, change a value, and Vite hot-reloads the result instantly in the browser.
+
+## Paleta de colores principal
+
+The following colors are used throughout `App.css`. All values are hardcoded (no CSS custom properties yet):
+
+| Variable / Uso | Color |
+|---|---|
+| Fondo general (`body`) | `#fdf8f0` |
+| Texto principal | `#2c1a12` |
+| Acento / borde | `#e6b422` |
+| Fondo hero (gradiente) | `#1f2a0e` → `#2c1a12` |
+| Botón WhatsApp | `#25D366` |
+| Precio / destacado | `#e67e22` |
+
+## Cambiar colores de marca
+
+The main accent color `#e6b422` (golden yellow) is the most visible brand color. It appears in at least five places inside `App.css`:
+
+| Selector | Uso |
+|---|---|
+| `.hours` | Pill de horario en el hero |
+| `.creator-button` | Botón "hecho por amandarina.cl" |
+| `.cart-total` | Borde superior del total del carrito |
+| `.popular-badge` | Badge de gradiente "🔥 Más pedida" |
+| `.btn-add:hover` | Fondo del botón al pasar el cursor |
+
+To change the brand accent to a different color, search for `#e6b422` in `App.css` and replace all occurrences:
+
+```css
+/* Antes */
+background: #e6b422; /* [!code --] */
+
+/* Después */
+background: #d4a017; /* [!code ++] */
+```
+
+<Tip>
+  Instead of replacing each occurrence individually, consider refactoring to **CSS custom properties** (variables). Add the palette at the top of `App.css` and reference variables everywhere:
+
+  ```css
+  :root {
+    --color-accent:     #e6b422;
+    --color-bg:         #fdf8f0;
+    --color-text:       #2c1a12;
+    --color-price:      #e67e22;
+    --color-whatsapp:   #25D366;
+    --color-hero-start: #1f2a0e;
+    --color-hero-end:   #2c1a12;
+  }
+  ```
+
+  Then replace literal values like `background: #e6b422` with `background: var(--color-accent)`. This way a future rebrand requires changing only the `:root` block.
+</Tip>
+
+## Estilos de tarjeta
+
+Each burger is rendered inside a `.burger-card` element. The key rules that define its look and feel:
+
+```css
+.burger-card {
+  background: white;
+  border-radius: 20px;          /* esquinas muy redondeadas */
+  overflow: hidden;             /* la imagen no desborda las esquinas */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);  /* sombra suave en reposo */
+  transition: all 0.3s ease;   /* animación suave en hover */
+  border: 1px solid #ffe1b3;   /* borde cálido casi invisible */
+}
+
+.burger-card:hover {
+  transform: translateY(-5px);                    /* sube 5 px al pasar el cursor */
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);      /* sombra más pronunciada */
+}
+```
+
+To adjust the card appearance:
+
+- **`border-radius`** — reduce to `8px` for sharper corners, increase to `28px` for a more pill-like feel.
+- **`box-shadow`** on hover — increase the third value (blur radius) for a softer glow, or change `rgba(0,0,0,0.15)` to a tinted shadow using the accent color.
+- **`transform: translateY(-5px)`** — change `-5px` to `-8px` for a more dramatic lift, or `0` to disable the animation.
+
+## Diseño responsive
+
+The app uses a single `@media (max-width: 768px)` breakpoint in `App.css` to adapt the layout for mobile screens:
+
+```css
+@media (max-width: 768px) {
+  /* La grilla pasa de columnas automáticas a una sola columna */
+  .burgers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* El carrito deja de ser sticky y se convierte en un panel deslizante */
+  .cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -100%;          /* oculto fuera de pantalla por defecto */
+    width: 85%;
+    max-width: 400px;
+    height: 100vh;
+    z-index: 999;
+    border-radius: 0;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+  }
+
+  /* Al abrirse (clase añadida por React), el panel entra desde la derecha */
+  .cart-sidebar.mobile-open {
+    right: 0;
+  }
+
+  /* Botón flotante del carrito visible solo en móvil */
+  .mobile-cart-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+```
+
+**Key behaviors on mobile (`≤ 768 px`):**
+
+- The burger grid collapses to a **single column** (`grid-template-columns: 1fr`).
+- The cart sidebar becomes a **fixed slide-in panel** from the right edge of the screen, hidden off-canvas until the user taps the floating cart button.
+- A **semi-transparent overlay** (`.cart-overlay`) covers the menu behind the open cart.
+- A **close button** (`.mobile-close`) appears inside the cart header to dismiss the panel.
+
+To change the breakpoint (e.g., also target tablets at 1024 px), duplicate the media query block with the new value:
+
+```css
+@media (max-width: 1024px) {
+  .burgers-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+```

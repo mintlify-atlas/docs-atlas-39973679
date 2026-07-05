@@ -1,0 +1,46 @@
+{
+  "projectType": "saas",
+  "projectName": "Giovanny Burger",
+  "projectDescription": "A React-based digital menu and ordering web app for GMV Burger, letting customers browse burgers, manage a shopping cart with local persistence, and send orders directly via WhatsApp.",
+  "theme": "almond",
+  "primaryColor": "#8727fc",
+  "lightColor": "#8c51fc",
+  "darkColor": null,
+  "navigation": {
+    "groups": [
+      {
+        "group": "Introducción",
+        "pages": ["introduction", "quickstart"]
+      },
+      {
+        "group": "Características",
+        "pages": ["features/menu", "features/cart", "features/whatsapp"]
+      },
+      {
+        "group": "Configuración",
+        "pages": ["configuration/products", "configuration/whatsapp-number", "configuration/styling"]
+      },
+      {
+        "group": "Despliegue",
+        "pages": ["deployment/local", "deployment/production"]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Interactive digital burger menu with product images, prices, and popularity badges",
+    "Fully functional shopping cart with add, remove, and quantity adjustment",
+    "LocalStorage cart persistence across browser sessions",
+    "One-click WhatsApp order dispatch with auto-formatted order summary",
+    "Responsive design optimized for both mobile and desktop",
+    "Floating mobile cart button with live item count badge"
+  ],
+  "publicApiSurface": [
+    "addToCart(burger) — adds a burger item to the cart or increments its quantity",
+    "updateQuantity(id, delta) — increments or decrements a cart item's quantity",
+    "removeItem(id) — removes a cart item entirely",
+    "getTotal() — returns the sum of all cart item prices",
+    "getCartCount() — returns the total number of items in the cart",
+    "sendWhatsAppOrder() — composes and opens a WhatsApp URL with the full order summary",
+    "burgers[] — static data array defining all menu items (id, name, price, ingredients, badge, image, isPopular)"
+  ]
+}

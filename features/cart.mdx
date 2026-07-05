@@ -1,0 +1,138 @@
+---
+title: "Shopping Cart with LocalStorage Persistence"
+sidebarTitle: "Carrito"
+description: "Manage orders with a reactive cart — add, adjust quantities, remove items, see live totals, and persist the session via localStorage with a mobile slide-in panel."
+---
+
+El carrito de **GMV Burger** es un panel lateral (`cart-sidebar`) que convive con el menú en escritorio y se convierte en un drawer deslizante en móvil. Refleja en tiempo real los productos seleccionados, sus cantidades, el total acumulado y un botón para enviar el pedido por WhatsApp. El contenido sobrevive recargas de página gracias a `localStorage`.
+
+## Estado del carrito
+
+El estado `cart` se inicializa con una función lazy de `useState`. Antes de crear un array vacío, intenta leer la clave `chamosCart` de `localStorage` para restaurar la sesión anterior del usuario:
+
+```jsx
+const [cart, setCart] = useState(() => {
+  const savedCart = localStorage.getItem('chamosCart');
+  return savedCart ? JSON.parse(savedCart) : [];
+});
+```
+
+Adicionalmente, el estado `isCartOpen` controla la visibilidad del panel en pantallas móviles:
+
+```jsx
+const [isCartOpen, setIsCartOpen] = useState(false);
+```
+
+## Funciones del carrito
+
+### `addToCart(burger)` — Añade o incrementa
+
+Si el producto ya existe en el carrito, incrementa su cantidad. De lo contrario lo inserta con `quantity: 1`:
+
+```jsx
+const addToCart = (burger) => {
+  setCart(prevCart => {
+    const existing = prevCart.find(item => item.id === burger.id);
+    if (existing) {
+      return prevCart.map(item =>
+        item.id === burger.id ? { ...item, quantity: item.quantity + 1 } : item
+      );
+    }
+    return [...prevCart, { ...burger, quantity: 1 }];
+  });
+};
+```
+
+### `updateQuantity(id, delta)` — Incrementa o decrementa con auto-eliminación
+
+Modifica la cantidad de un ítem por `id`. Si la nueva cantidad llega a `0` o menos, el ítem se elimina automáticamente mediante `.filter(Boolean)`:
+
+```jsx
+const updateQuantity = (id, delta) => {
+  setCart(prevCart =>
+    prevCart.map(item => {
+      if (item.id === id) {
+        const newQuantity = item.quantity + delta;
+        return newQuantity > 0 ? { ...item, quantity: newQuantity } : null;
+      }
+      return item;
+    }).filter(Boolean)
+  );
+};
+```
+
+### `removeItem(id)` — Elimina por id
+
+Elimina directamente un ítem del carrito sin importar su cantidad, usando `.filter()`:
+
+```jsx
+const removeItem = (id) => {
+  setCart(prevCart => prevCart.filter(item => item.id !== id));
+};
+```
+
+### `getTotal()` — Suma de precio × cantidad
+
+Calcula el total acumulado del carrito con `.reduce()`, multiplicando `price` × `quantity` por cada ítem:
+
+```jsx
+const getTotal = () => {
+  return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+};
+```
+
+### `getCartCount()` — Suma de unidades
+
+Retorna el número total de unidades en el carrito (no el número de productos distintos). Es el valor que se muestra en el botón flotante móvil:
+
+```jsx
+const getCartCount = () => {
+  return cart.reduce((count, item) => count + item.quantity, 0);
+};
+```
+
+## Persistencia con LocalStorage
+
+Un `useEffect` escucha cada cambio en el estado `cart` y serializa su valor bajo la clave `chamosCart`:
+
+```jsx
+useEffect(() => {
+  localStorage.setItem('chamosCart', JSON.stringify(cart));
+}, [cart]);
+```
+
+El efecto se dispara **después de cada render** causado por un cambio en `cart` — es decir, cada vez que se añade, elimina o modifica la cantidad de un producto. Gracias a la inicialización lazy del estado, el carrito se recupera automáticamente en la próxima visita sin necesidad de volver a añadir los productos.
+
+## Comportamiento en móvil
+
+En resoluciones menores a `768px` el `cart-sidebar` se posiciona como `fixed` fuera de pantalla (`right: -100%`). Al activar `isCartOpen`, recibe la clase `mobile-open` que lo desliza hacia adentro (`right: 0`):
+
+```jsx
+{/* Overlay semitransparente: cerrar al hacer clic fuera del carrito */}
+{isCartOpen && (
+  <div className="cart-overlay" onClick={() => setIsCartOpen(false)}></div>
+)}
+
+<div className={`cart-sidebar ${isCartOpen ? 'mobile-open' : ''}`}>
+  {/* contenido del carrito */}
+</div>
+
+{/* Botón flotante: solo visible cuando hay ítems en el carrito */}
+{getCartCount() > 0 && (
+  <button className="mobile-cart-btn" onClick={() => setIsCartOpen(true)}>
+    <ShoppingCart size={24} />
+    <span className="cart-badge">{getCartCount()}</span>
+  </button>
+)}
+```
+
+| Elemento | Comportamiento |
+|---|---|
+| `cart-overlay` | Fondo oscuro semitransparente. Un clic en él llama `setIsCartOpen(false)` y cierra el panel. |
+| `mobile-open` | Clase CSS que transiciona `right` de `-100%` a `0` en `0.3s ease`. |
+| `mobile-cart-btn` | Botón circular fijo en `bottom: 20px / right: 20px`. Solo se renderiza cuando `getCartCount() > 0`. Muestra el total de unidades como badge naranja. |
+| `mobile-close` (X) | Botón dentro del header del carrito, solo visible en móvil, cierra el panel. |
+
+<Tip>
+  Para resetear el carrito durante el desarrollo sin tener que eliminar ítems uno a uno, abre las DevTools del navegador, ve a **Application → Storage → Local Storage**, selecciona el origen de la app y elimina la clave **`chamosCart`**. Al recargar la página el carrito arrancará vacío como si fuera la primera visita.
+</Tip>

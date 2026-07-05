@@ -1,0 +1,88 @@
+---
+title: "Interactive Burger Menu with Photos and Badges"
+sidebarTitle: "Menú"
+description: "Explore the digital menu grid of Giovanny Burger — product cards with photos, category badges, ingredient lists, and popularity highlights for all 9 burgers."
+---
+
+El menú de **GMV Burger** se despliega como una cuadrícula responsiva de tarjetas (`burgers-grid`). Cada tarjeta muestra una foto real del producto, su badge de categoría, la lista de ingredientes y un botón para agregar al carrito. En pantallas pequeñas la cuadrícula colapsa a una columna para facilitar la navegación táctil.
+
+## Productos del menú
+
+La constante `burgers` define los 9 productos disponibles. Aquí encontrarás el nombre, precio, badge y si poseen el distintivo de popularidad:
+
+| Nombre | Precio | Badge | ¿Popular? |
+|---|---|---|---|
+| La Bestia · Chamos | $38,000 | 🔥 La Bestia | Sí |
+| Puerquita | $33,000 | 🐷 Ahumada | No |
+| Favorita | $28,000 | ⭐ Favorita | Sí |
+| Especial | $28,000 | 🥩 Premium | No |
+| Mechiburger | $25,000 | 🧀 Mechada | No |
+| Doble Carne | $25,000 | 🍔 Doble | No |
+| Mixta | $23,000 | 🐔+🐮 | No |
+| De la Casa | $20,000 | 🏆 Clásica | No |
+| Clásica | $20,000 | 🌟 Best seller | Sí |
+
+## Estructura de un producto
+
+Cada elemento del array `burgers` sigue esta forma. Los campos son leídos directamente en el JSX de la tarjeta:
+
+```js
+{
+  id: "clasica",               // string — identificador único del ítem
+  name: "Clásica",             // string — nombre visible en la tarjeta
+  price: 20000,                // number — precio en pesos colombianos (sin separador)
+  ingredients: "120gr de carne de res, tocineta y huevo. (Best seller)",
+                               // string — descripción de ingredientes especiales
+  badge: "🌟 Best seller",    // string — etiqueta de categoría mostrada en .badge
+  icon: <Flame size={18} />,   // ReactNode — ícono Lucide acompañando al badge
+  image: clasicaImg,           // string — módulo importado desde src/assets/images/
+  isPopular: true              // boolean — controla el banner "🔥 Más pedida"
+}
+```
+
+## Añadir un producto al carrito
+
+El botón `+ Agregar al pedido` de cada tarjeta llama a `addToCart(burger)` pasando el objeto completo del producto. La función usa el setter funcional de `useState` para garantizar que trabaja siempre con el estado más reciente:
+
+```jsx
+const addToCart = (burger) => {
+  setCart(prevCart => {
+    const existing = prevCart.find(item => item.id === burger.id);
+    if (existing) {
+      return prevCart.map(item =>
+        item.id === burger.id ? { ...item, quantity: item.quantity + 1 } : item
+      );
+    }
+    return [...prevCart, { ...burger, quantity: 1 }];
+  });
+};
+```
+
+**Comportamiento:**
+- Si el producto **ya existe** en el carrito (mismo `id`), se incrementa su `quantity` en 1 usando `.map()`.
+- Si el producto **es nuevo**, se añade al final del array con `quantity: 1`.
+- El estado original nunca se muta — se devuelve siempre un nuevo array.
+
+## Badge de popularidad
+
+El campo `isPopular: true` activa un banner visual superpuesto sobre la foto del producto. El JSX lo evalúa de forma condicional dentro del contenedor de imagen:
+
+```jsx
+<div className="burger-image-container">
+  <img
+    src={burger.image}
+    alt={burger.name}
+    className="burger-image"
+    onError={(e) => {
+      e.target.src = 'https://via.placeholder.com/400x300/2c1a12/fbd26a?text=GMV+Burger';
+    }}
+  />
+  {burger.isPopular && <span className="popular-badge">🔥 Más pedida</span>}
+</div>
+```
+
+El `<span className="popular-badge">` se posiciona en `absolute` sobre la esquina superior derecha de la foto con un gradiente dorado (`#e6b422 → #f5a623`). Solo los tres productos con `isPopular: true` — **La Bestia · Chamos**, **Favorita** y **Clásica** — muestran este badge.
+
+<Note>
+  Todas las hamburguesas incluyen de base: **papas, jamón, queso, papa picada, lechuga, tomate, cebolla y salsas**. Los ingredientes listados en cada tarjeta describen únicamente los cortes y proteínas específicos del producto. Esta información también aparece en el pie del carrito lateral.
+</Note>

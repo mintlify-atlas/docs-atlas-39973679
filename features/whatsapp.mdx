@@ -1,0 +1,94 @@
+---
+title: "WhatsApp Order Integration — Auto-formatted Messages"
+sidebarTitle: "WhatsApp"
+description: "Learn how sendWhatsAppOrder builds a formatted order summary and opens a wa.me deep-link so customers send their full order directly to the restaurant's WhatsApp."
+---
+
+**GMV Burger** no necesita un backend ni sistema de pagos: el pedido viaja directamente al WhatsApp del restaurante. Cuando el cliente pulsa **Pedir por WhatsApp**, la función `sendWhatsAppOrder()` construye un mensaje de texto enriquecido con el resumen completo del carrito y abre una pestaña nueva apuntando a la URL `wa.me` con ese mensaje pre-rellenado.
+
+## Cómo funciona
+
+El flujo completo ocurre del lado del cliente en milisegundos:
+
+1. **El usuario pulsa** el botón `Pedir por WhatsApp` en el panel del carrito.
+2. `sendWhatsAppOrder()` se ejecuta.
+3. La función **valida** que el carrito no esté vacío — si lo está, lanza un `alert` y termina.
+4. Se **construye el mensaje** iterando sobre cada ítem del carrito con su nombre, cantidad y subtotal.
+5. Se **codifica** el mensaje con `encodeURIComponent` y se concatena a la URL base `https://wa.me/{phoneNumber}`.
+6. `window.open(url, "_blank")` **abre la conversación de WhatsApp** (web o app nativa) con el mensaje listo para enviar.
+
+## La función sendWhatsAppOrder
+
+Esta es la función completa tal como está en `App.jsx`:
+
+```jsx
+const sendWhatsAppOrder = () => {
+  if (cart.length === 0) {
+    alert("🛒 Tu carrito está vacío. Agrega alguna hamburguesa antes de pedir.");
+    return;
+  }
+
+  let message = "🍔 *PEDIDO GMV BURGER* 🍔\n";
+  message += "────────────────\n";
+  cart.forEach(item => {
+    message += `• ${item.name}  x${item.quantity}  → $${(item.price * item.quantity).toLocaleString()}\n`;
+  });
+  const total = getTotal();
+  message += `────────────────\n`;
+  message += `💰 *TOTAL: $${total.toLocaleString()}*\n`;
+  message += `📦 *incluye papas, quesos, salsas y vegetales frescos*\n`;
+  message += `🚚 *Domicilio o recoger* — Respóndeme con dirección o confirmación\n`;
+  message += `🔥 ¡Parrillero listo! 🔥`;
+
+  // Cambia este número por el WhatsApp real del restaurante
+  const phoneNumber = "573000000000";
+  const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+};
+```
+
+## Formato del mensaje
+
+El texto generado por la función sigue esta estructura. WhatsApp interpretará la sintaxis `*texto*` como **negrita**:
+
+```text
+🍔 *PEDIDO GMV BURGER* 🍔
+────────────────
+• Clásica  x2  → $40,000
+• Favorita  x1  → $28,000
+────────────────
+💰 *TOTAL: $68,000*
+📦 *incluye papas, quesos, salsas y vegetales frescos*
+🚚 *Domicilio o recoger* — Respóndeme con dirección o confirmación
+🔥 ¡Parrillero listo! 🔥
+```
+
+Cada línea de producto usa la plantilla literal:
+
+```jsx
+`• ${item.name}  x${item.quantity}  → $${(item.price * item.quantity).toLocaleString()}\n`
+```
+
+El subtotal de cada ítem se formatea con `.toLocaleString()` para insertar separadores de miles según la configuración regional del navegador del cliente.
+
+## Configurar el número de WhatsApp
+
+El número destino está declarado en una sola línea dentro de `sendWhatsAppOrder`:
+
+```jsx
+const phoneNumber = "573000000000";
+```
+
+**Formato requerido:** código de país seguido del número local, **sin `+`, sin espacios ni guiones**.
+
+| Campo | Ejemplo |
+|---|---|
+| Código de país (Colombia) | `57` |
+| Número local (10 dígitos) | `3000000000` |
+| Valor final en el código | `"573000000000"` |
+
+Para actualizar el número de destino, reemplaza `"573000000000"` con el número real del restaurante. Consulta la guía de configuración en [/configuration/whatsapp-number](/configuration/whatsapp-number) para más detalles sobre despliegue en producción.
+
+<Warning>
+  Si el carrito está **vacío** cuando el usuario pulsa el botón, `sendWhatsAppOrder` ejecuta un `alert` nativo con el mensaje `"🛒 Tu carrito está vacío. Agrega alguna hamburguesa antes de pedir."` y retorna inmediatamente — **no se abre ninguna URL de WhatsApp**. Asegúrate de que esta guarda esté presente si modificas la función, para evitar abrir conversaciones con mensajes vacíos.
+</Warning>

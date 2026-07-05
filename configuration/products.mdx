@@ -1,0 +1,141 @@
+---
+title: "Customize the Burger Menu — Add, Edit, Remove Items"
+sidebarTitle: "Productos"
+description: "Learn how to edit the burgers array in src/App.jsx to add new menu items, update prices and ingredients, or remove entries from the digital menu."
+---
+
+All menu items shown in the Giovanny Burger digital menu live in the `burgers` array declared at the top of `src/App.jsx`. Adding, editing, or removing a burger is as simple as modifying that array — no backend, no database. The UI re-renders automatically with every change.
+
+## Estructura de un producto
+
+Each element in the `burgers` array is a plain JavaScript object with the following fields:
+
+```jsx
+{
+  id: "clasica",             // identificador único (string)
+  name: "Clásica",           // nombre que aparece en la tarjeta
+  price: 20000,              // precio en COP (número, sin puntos ni símbolo)
+  ingredients: "120gr de carne de res, tocineta y huevo. (Best seller)",
+                             // descripción de ingredientes
+  badge: "🌟 Best seller",  // etiqueta decorativa que aparece bajo el nombre
+  icon: <Flame size={18} />, // ícono de Lucide React (ver sección Íconos)
+  image: clasicaImg,         // imagen importada desde assets/images/
+  isPopular: true            // muestra el badge "🔥 Más pedida" sobre la foto
+}
+```
+
+## Añadir una hamburguesa nueva
+
+<Steps>
+  <Step title="Agrega la imagen a src/assets/images/">
+    Copia el archivo de imagen de la nueva hamburguesa dentro de `src/assets/images/`. Se recomienda un tamaño de **400 × 300 px** (relación 4:3) para mantener uniformidad visual en la grilla.
+
+    ```text
+    src/assets/images/burger-nueva.jpg
+    ```
+  </Step>
+
+  <Step title="Importa la imagen en App.jsx">
+    Abre `src/App.jsx` y añade una línea de importación junto al resto de las imágenes, al inicio del archivo:
+
+    ```jsx
+    import nuevaImg from './assets/images/burger-nueva.jpg';
+    ```
+  </Step>
+
+  <Step title="Agrega el objeto al array burgers">
+    Dentro del array `burgers`, añade un nuevo objeto con todos los campos requeridos:
+
+    ```jsx
+    {
+      id: "nueva",
+      name: "Nueva Burger",
+      price: 26000,
+      ingredients: "120gr de carne de res, queso doble, tocineta crocante y salsa secreta.",
+      badge: "🆕 Nueva",
+      icon: <Star size={18} />,
+      image: nuevaImg,
+      isPopular: false
+    },
+    ```
+
+    <Note>
+      El campo `id` debe ser único en todo el array. Usa letras minúsculas sin espacios ni tildes (ej. `"triple-carne"`, `"bbq-especial"`).
+    </Note>
+  </Step>
+
+  <Step title="Elige un ícono de Lucide React">
+    El campo `icon` acepta cualquier componente de [Lucide React](https://lucide.dev). Los iconos actualmente importados en `App.jsx` son:
+
+    | Componente | Uso actual |
+    |---|---|
+    | `<Crown size={18} />` | La Bestia · Chamos |
+    | `<Flame size={18} />` | Puerquita, Clásica |
+    | `<Star size={18} />` | Favorita, De la Casa |
+    | `<Beef size={18} />` | Especial, Mechiburger, Doble Carne, Mixta |
+
+    Si quieres usar un ícono nuevo, añádelo a la importación en la primera línea de `App.jsx`:
+
+    ```jsx
+    import { ShoppingCart, Plus, Minus, Trash2, Phone, Flame, Star, Beef, Crown, X, Pizza } from 'lucide-react';
+    ```
+  </Step>
+</Steps>
+
+## Editar una hamburguesa existente
+
+Localiza el objeto dentro del array `burgers` buscando su `id`. Por ejemplo, para cambiar el precio y los ingredientes de la **Clásica**:
+
+```jsx
+{
+  id: "clasica",
+  name: "Clásica",
+  price: 22000,              // precio actualizado
+  ingredients: "120gr de carne de res, tocineta, huevo y queso cheddar.", // ingredientes editados
+  badge: "🌟 Best seller",
+  icon: <Flame size={18} />,
+  image: clasicaImg,
+  isPopular: true
+},
+```
+
+Guarda el archivo y Vite recargará el navegador automáticamente con los nuevos valores.
+
+## Eliminar una hamburguesa
+
+Para retirar un producto del menú, elimina el objeto completo del array `burgers`. Por ejemplo, para eliminar la **Mixta**:
+
+```jsx
+// Antes — eliminar todo este bloque:
+{
+  id: "mixta",
+  name: "Mixta",
+  price: 23000,
+  ingredients: "120gr de pechuga de pollo a la plancha, 120gr de carne de res y huevo.",
+  badge: "🐔+🐮",
+  icon: <Beef size={18} />,
+  image: mixtaImg,
+  isPopular: false
+},
+```
+
+<Warning>
+  Si eliminas un producto, también puedes borrar su importación de imagen al inicio del archivo para mantener el código limpio. Sin embargo, dejar el `import` sin usar solo genera una advertencia de Vite, no rompe la app.
+</Warning>
+
+## Íconos disponibles
+
+Los siguientes íconos de Lucide React ya están importados en la primera línea de `src/App.jsx` y están listos para usar en cualquier producto:
+
+| Nombre | Componente JSX |
+|---|---|
+| `Crown` | `<Crown size={18} />` |
+| `Flame` | `<Flame size={18} />` |
+| `Star` | `<Star size={18} />` |
+| `Beef` | `<Beef size={18} />` |
+
+Para explorar más íconos disponibles visita [lucide.dev](https://lucide.dev) e importa el nuevo nombre en la línea de importación de `App.jsx`.
+
+<Tip>
+  Usa imágenes con dimensiones consistentes de **400 × 300 px** (relación de aspecto 4:3) para todas las hamburguesas. Esto garantiza que todas las tarjetas tengan la misma altura de imagen en la grilla y el diseño no se rompa con fotos de tamaños dispares. Si la imagen falla al cargar, la app mostrará automáticamente un placeholder de respaldo.
+</Tip>

@@ -1,47 +1,97 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get started with Giovanny Burger in 5 minutes"
+sidebarTitle: "Quickstart"
+description: "Aprende a clonar pedidoHAM, instalar sus dependencias, levantar el servidor local y personalizar el número de WhatsApp del restaurante."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
+Esta guía te lleva desde cero hasta tener **pedidoHAM** corriendo en tu máquina local. En menos de cinco minutos verás el menú completo de GMV Burger en el navegador, con el carrito funcionando y listo para conectar al número de WhatsApp real de tu negocio.
 
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+## Prerrequisitos
 
-## Prerequisites
+Antes de comenzar asegúrate de tener instalado lo siguiente:
 
-Before you begin, you must have:
+- **Node.js 18 o superior** — [nodejs.org](https://nodejs.org)
+- **npm, yarn o pnpm** — npm viene incluido con Node.js
+- **Git** — [git-scm.com](https://git-scm.com)
+- **Una cuenta de WhatsApp** para el restaurante (el número que recibirá los pedidos)
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+## Instalación
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+  <Step title="Clona el repositorio">
+    Descarga el código fuente de pedidoHAM desde GitHub:
 
     ```bash
-    npm install your-package
+    git clone https://github.com/giovanymevi/pedidoHAM
+    cd pedidoHAM
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
 
-    ```bash
-    your-cli init
-    ```
+  <Step title="Instala las dependencias">
+    Instala React 19, Vite 8, Lucide React y el resto de dependencias del proyecto:
+
+    <CodeGroup>
+      ```bash npm
+      npm install
+      ```
+
+      ```bash yarn
+      yarn install
+      ```
+
+      ```bash pnpm
+      pnpm install
+      ```
+    </CodeGroup>
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
+
+  <Step title="Inicia el servidor de desarrollo">
+    Levanta Vite en modo desarrollo:
 
     ```bash
-    your-cli start
+    npm run dev
     ```
+
+    Vite compilará el proyecto y abrirá un servidor local en **`http://localhost:5173`**. Cualquier cambio que hagas en el código se reflejará en el navegador de forma instantánea gracias al Hot Module Replacement (HMR).
+  </Step>
+
+  <Step title="Abre la aplicación">
+    Navega a `http://localhost:5173` en tu navegador. Verás:
+
+    - 🍔 **Hero Header** — nombre del restaurante, horario de atención (Lun–Dom · 5:00 pm – 11:00 pm) y el botón de créditos.
+    - 🗂️ **Cuadrícula de hamburguesas** — nueve tarjetas con foto, ingredientes, precio y botón "Agregar al pedido".
+    - 🛒 **Cart Sidebar** — panel lateral (escritorio) o botón flotante (móvil) con el resumen del carrito, totales y el botón "Pedir por WhatsApp".
+  </Step>
+
+  <Step title="Personaliza el número de WhatsApp">
+    Abre `src/App.jsx` y localiza la siguiente línea dentro de la función `sendWhatsAppOrder`:
+
+    ```jsx
+    // Cambia este número por el WhatsApp real del restaurante
+    const phoneNumber = "573000000000";
+    ```
+
+    Reemplaza `"573000000000"` por el número real del restaurante en formato internacional **sin espacios ni guiones** (código de país + número). Por ejemplo, para Colombia:
+
+    ```jsx
+    const phoneNumber = "573101234567";
+    ```
+
+    Guarda el archivo — Vite recargará la app automáticamente. A partir de ese momento, el botón **"Pedir por WhatsApp"** abrirá una conversación directa con ese número incluyendo el resumen completo del pedido.
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Scripts disponibles
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
+Todos los scripts se definen en `package.json` y se ejecutan con `npm run <script>`:
+
+| Script | Comando | Descripción |
+|---|---|---|
+| `dev` | `vite` | Inicia el servidor de desarrollo en `http://localhost:5173` con HMR habilitado. |
+| `build` | `vite build` | Genera el bundle de producción optimizado en la carpeta `dist/`. |
+| `lint` | `eslint .` | Analiza el código con ESLint para detectar errores y malas prácticas. |
+| `preview` | `vite preview` | Sirve localmente el bundle de producción generado por `build` para su verificación. |
+
+<Tip>
+  Antes de desplegar a producción, ejecuta `npm run build` seguido de `npm run preview` para probar el bundle final en tu máquina. `vite preview` sirve el contenido de `dist/` exactamente como lo haría un servidor estático, lo que te permite detectar problemas de rutas o assets faltantes antes de hacer el deploy.
 </Tip>

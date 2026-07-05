@@ -1,0 +1,154 @@
+---
+title: "Deploy Giovanny Burger: Vercel, Netlify, and Static Hosting"
+sidebarTitle: "Producción"
+description: "Build the Vite app into a static dist/ bundle and deploy Giovanny Burger to Vercel, Netlify, or any static hosting platform with zero server configuration."
+---
+
+Giovanny Burger es una **aplicación estática** — el resultado del build es un conjunto de archivos HTML, CSS y JavaScript planos que puedes alojar en cualquier plataforma de hosting estático sin necesidad de configurar un servidor backend. No hay base de datos ni runtime de Node.js requerido en producción.
+
+## Generar el build de producción
+
+Antes de desplegar, genera el bundle optimizado con:
+
+```bash
+npm run build
+```
+
+Vite compilará y minificará todos los módulos y producirá la carpeta `dist/` en la raíz del proyecto. Su contenido será algo similar a:
+
+```
+dist/
+├── index.html
+├── assets/
+│   ├── index-[hash].js
+│   └── index-[hash].css
+└── favicon.svg
+```
+
+El output es HTML, CSS y JS puro — no requiere ningún proceso de servidor para ser servido. Las imágenes de las hamburguesas y demás assets estáticos quedan **incrustados o referenciados localmente** dentro de `dist/`, por lo que no necesitas un CDN externo.
+
+<Tip>
+  Antes de hacer push a producción, ejecuta `npm run preview` para servir el build localmente y verificar que todo funciona exactamente como en producción:
+
+  ```bash
+  npm run preview
+  ```
+
+  Vite levantará un servidor estático apuntando a `dist/` en `http://localhost:4173`. Comprueba el menú, el carrito y el enlace de WhatsApp antes de desplegar.
+</Tip>
+
+## Despliegue en Vercel
+
+Vercel es la opción más sencilla para proyectos Vite: detecta el framework automáticamente y no requiere ningún archivo de configuración adicional.
+
+<Steps>
+  <Step title="Instalar la CLI de Vercel (opcional)">
+    Si prefieres desplegar desde la terminal, instala la CLI de Vercel globalmente:
+
+    ```bash
+    npm install -g vercel
+    ```
+
+    Alternativamente, puedes usar el **dashboard de Vercel** en [vercel.com](https://vercel.com) para conectar el repositorio de GitHub directamente, sin instalar nada.
+  </Step>
+
+  <Step title="Ejecutar el despliegue">
+    Desde la raíz del proyecto, ejecuta:
+
+    ```bash
+    vercel
+    ```
+
+    Sigue las indicaciones del asistente interactivo. Si estás usando el dashboard, importa el repositorio `giovanymevi/pedidoHAM` desde la interfaz web y haz clic en **Deploy**.
+  </Step>
+
+  <Step title="Configuración automática de Vite">
+    Vercel detecta automáticamente que el proyecto usa Vite y aplica la configuración correcta:
+
+    - **Build command:** `vite build`
+    - **Output directory:** `dist`
+    - **Install command:** `npm install`
+
+    No necesitas crear un archivo `vercel.json` ni modificar ninguna configuración del proyecto.
+  </Step>
+
+  <Step title="Aplicación en línea">
+    Una vez finalizado el despliegue, tu app estará disponible en una URL como:
+
+    ```
+    https://your-project.vercel.app
+    ```
+
+    Cada push a la rama principal del repositorio desencadenará un nuevo despliegue automático.
+  </Step>
+</Steps>
+
+## Despliegue en Netlify
+
+Netlify ofrece dos vías igualmente sencillas: arrastrar la carpeta `dist/` al dashboard o usar su CLI.
+
+<Steps>
+  <Step title="Generar el build de producción">
+    Si aún no lo has hecho, genera la carpeta `dist/`:
+
+    ```bash
+    npm run build
+    ```
+
+    Asegúrate de que la carpeta `dist/` existe y contiene `index.html` antes de continuar.
+  </Step>
+
+  <Step title="Desplegar en Netlify">
+    **Opción A — Drag & drop (sin CLI):**
+
+    1. Ve a [app.netlify.com](https://app.netlify.com) e inicia sesión.
+    2. En la sección *Sites*, arrastra y suelta la carpeta `dist/` completa en el área de drop de Netlify.
+    3. Netlify procesará los archivos y publicará el sitio automáticamente.
+
+    **Opción B — CLI de Netlify:**
+
+    ```bash
+    npm install -g netlify-cli
+    netlify deploy --dir=dist --prod
+    ```
+
+    La flag `--prod` publica directamente en la URL de producción (sin staging previo).
+  </Step>
+
+  <Step title="Aplicación en línea">
+    Tu app estará disponible en una URL generada automáticamente:
+
+    ```
+    https://your-site.netlify.app
+    ```
+
+    Puedes configurar un dominio personalizado desde el panel de Netlify en cualquier momento.
+  </Step>
+</Steps>
+
+## Otras plataformas estáticas
+
+Dado que el output de `npm run build` es un bundle estático estándar, Giovanny Burger es compatible con cualquier plataforma que sirva archivos estáticos. Las siguientes opciones son populares y gratuitas en su nivel básico:
+
+- **GitHub Pages** — ideal si el repositorio ya está en GitHub; configura la carpeta `dist/` como fuente de publicación desde *Settings → Pages*.
+- **Cloudflare Pages** — conecta el repositorio y Cloudflare detecta Vite automáticamente; ofrece CDN global con muy baja latencia.
+- **Firebase Hosting** — usa `firebase init hosting` apuntando a `dist/` como directorio público, luego `firebase deploy`.
+
+En todos los casos, el proceso es el mismo: generar `dist/` con `npm run build` y apuntar la plataforma a esa carpeta.
+
+## Variables de entorno
+
+Giovanny Burger **no requiere variables de entorno** para funcionar. No hay claves de API externas ni secrets de servidor involucrados.
+
+El único valor que necesitas configurar antes de desplegar es el **número de teléfono de WhatsApp** al que se envían los pedidos. Este número está definido directamente en el código fuente:
+
+```jsx
+// src/App.jsx
+const WHATSAPP_NUMBER = "569XXXXXXXX"; // Reemplaza con el número real
+```
+
+Para más detalles sobre cómo cambiar este valor, consulta la guía [Configurar el número de WhatsApp](/configuration/whatsapp-number).
+
+<Note>
+  Todas las imágenes de las hamburguesas y demás assets visuales son procesados y empaquetados por Vite durante el build. El resultado final en `dist/` es completamente autónomo — **no se necesita un CDN ni un servicio de hosting de imágenes externo** para que la app funcione en producción.
+</Note>

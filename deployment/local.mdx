@@ -1,0 +1,109 @@
+---
+title: "Run Giovanny Burger Locally for Development"
+sidebarTitle: "Local"
+description: "Clone the pedidoHAM repo, install dependencies, start the Vite dev server, and verify the digital menu and WhatsApp ordering app runs at localhost:5173."
+---
+
+Ejecutar **Giovanny Burger** en tu máquina local es el punto de partida para cualquier trabajo de desarrollo o personalización. La aplicación está construida con React 19 y Vite 8, por lo que el proceso de instalación es rápido: un par de comandos y tendrás el servidor de desarrollo activo con recarga en caliente.
+
+## Requisitos previos
+
+Asegúrate de tener instalados los siguientes programas antes de continuar:
+
+- **Node.js** 18 o superior — [nodejs.org](https://nodejs.org)
+- **Gestor de paquetes** — cualquiera de los siguientes:
+  - npm 9+
+  - yarn 1.22+
+  - pnpm 8+
+- **Git** — para clonar el repositorio
+
+Puedes verificar tus versiones actuales con:
+
+```bash
+node -v
+npm -v
+git --version
+```
+
+## Pasos de instalación
+
+<Steps>
+  <Step title="Clonar el repositorio">
+    Clona el repositorio de GitHub y entra al directorio del proyecto:
+
+    ```bash
+    git clone https://github.com/giovanymevi/pedidoHAM.git && cd pedidoHAM
+    ```
+  </Step>
+
+  <Step title="Instalar dependencias">
+    Instala todas las dependencias del proyecto. Elige el gestor de paquetes que prefieras:
+
+    <CodeGroup>
+
+    ```bash npm
+    npm install
+    ```
+
+    ```bash yarn
+    yarn install
+    ```
+
+    ```bash pnpm
+    pnpm install
+    ```
+
+    </CodeGroup>
+
+    Esto instalará React 19, React DOM, Lucide React y todas las dependencias de desarrollo (Vite, ESLint y sus plugins).
+  </Step>
+
+  <Step title="Iniciar el servidor de desarrollo">
+    Levanta el servidor de desarrollo de Vite con el siguiente comando:
+
+    ```bash
+    npm run dev
+    ```
+
+    Vite mostrará en la terminal la URL local donde está corriendo la aplicación. Por defecto será:
+
+    ```
+    VITE v8.x.x  ready in Xms
+
+    ➜  Local:   http://localhost:5173/
+    ➜  Network: use --host to expose
+    ```
+
+    El servidor queda activo con **Hot Module Replacement (HMR)** habilitado.
+  </Step>
+
+  <Step title="Abrir la aplicación en el navegador">
+    Navega a [http://localhost:5173](http://localhost:5173) en tu navegador. Deberías ver:
+
+    - **Hero header** con el título *GMV Burger* y el botón del creador
+    - **Grilla de hamburguesas** con tarjetas de productos, precios y etiquetas de popularidad
+    - **Sidebar del carrito** (o botón flotante en móvil) listo para recibir productos
+    - **Botón de pedido por WhatsApp** en el carrito para enviar el resumen al parrillero
+  </Step>
+</Steps>
+
+## Scripts de desarrollo
+
+El `package.json` expone cuatro scripts que cubren el ciclo de vida completo del proyecto:
+
+| Script | Comando | Descripción |
+|---|---|---|
+| Desarrollo | `npm run dev` | Inicia el servidor Vite con HMR en `localhost:5173` |
+| Producción | `npm run build` | Genera el bundle optimizado en `dist/` |
+| Vista previa | `npm run preview` | Sirve el build de producción localmente |
+| Linting | `npm run lint` | Ejecuta ESLint sobre el proyecto |
+
+## Hot Module Replacement
+
+Vite incluye **HMR** (Hot Module Replacement) activo de manera predeterminada en modo desarrollo. Esto significa que cualquier cambio que guardes en `App.jsx`, `App.css` o cualquier otro módulo del proyecto se refleja **instantáneamente** en el navegador sin necesidad de recargar la página completa.
+
+El estado del componente se preserva entre actualizaciones en la mayoría de los casos, lo que hace que el ciclo de editar → ver sea especialmente ágil cuando, por ejemplo, estás ajustando estilos de las tarjetas de producto o modificando la lógica del carrito.
+
+<Note>
+  El carrito de compras persiste su estado en **localStorage** del navegador. Si necesitas resetear el carrito durante el desarrollo (por ejemplo, para probar el flujo desde cero), abre las **DevTools** del navegador → pestaña *Application* → *Storage* → *Local Storage* → `http://localhost:5173` y elimina la clave correspondiente al carrito. Al recargar la página, el estado quedará limpio.
+</Note>

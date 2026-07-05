@@ -1,72 +1,42 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Giovanny Burger",
+  "theme": "almond",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#8727fc",
+    "light": "#8c51fc",
+    "dark": "#8727fc"
   },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
+  "favicon": "https://media.brand.dev/1e675c8a-b5f1-493e-9dd7-332554203763.svg",
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
     "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "type": "github",
+      "href": "https://github.com/giovanymevi/pedidoHAM"
     }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/giovanymevi/pedidoHAM"
     }
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Introducción",
+        "pages": ["introduction", "quickstart"]
+      },
+      {
+        "group": "Características",
+        "pages": ["features/menu", "features/cart", "features/whatsapp"]
+      },
+      {
+        "group": "Configuración",
+        "pages": ["configuration/products", "configuration/whatsapp-number", "configuration/styling"]
+      },
+      {
+        "group": "Despliegue",
+        "pages": ["deployment/local", "deployment/production"]
+      }
+    ]
   }
 }
